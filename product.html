@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Серьги-подвески «Нити» — Dazzle Mood</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    /* ---- BREADCRUMB ---- */
+    .breadcrumb {
+      padding: 100px 64px 0;
+      display: flex; align-items: center; gap: 12px;
+      font-size: 11px; font-weight: 400; letter-spacing: 0.1em;
+    }
+    .breadcrumb a { color: var(--light-mid); text-decoration: none; transition: color 0.25s; }
+    .breadcrumb a:hover { color: var(--gold); }
+    .breadcrumb-sep { color: var(--border); }
+    .breadcrumb-current { color: var(--charcoal); }
+
+    /* ---- PRODUCT LAYOUT ---- */
+    .product-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      min-height: 80vh;
+    }
+
+    /* ---- GALLERY ---- */
+    .product-gallery { position: relative; display: flex; gap: 12px; padding: 40px 32px 80px 64px; background: var(--cream); }
+    .gallery-thumbs { display: flex; flex-direction: column; gap: 10px; width: 80px; flex-shrink: 0; }
+    .gallery-thumb {
+      width: 80px; height: 80px;
+      overflow: hidden; cursor: none;
+      border: 1px solid transparent;
+      transition: border-color 0.25s;
+    }
+    .gallery-thumb.active { border-color: var(--gold); }
+    .gallery-thumb:hover { border-color: var(--gold-light); }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .gallery-main { flex: 1; position: relative; overflow: hidden; }
+    .gallery-main img {
+      width: 100%; aspect-ratio: 3/4;
+      object-fit: cover; object-position: top;
+      display: block;
+      transition: opacity 0.35s;
+    }
+    .gallery-main-overlay {
+      position: absolute; top: 20px; right: 20px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .gallery-action {
+      width: 40px; height: 40px;
+      background: var(--warm-white);
+      border: none; cursor: none;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: background 0.25s;
+      box-shadow: 0 4px 16px rgba(42,37,32,0.1);
+    }
+    .gallery-action:hover { background: var(--gold); }
+
+    /* ---- PRODUCT INFO ---- */
+    .product-info { padding: 60px 64px 80px 48px; display: flex; flex-direction: column; }
+    .product-breadcrumb-cat { font-size: 10px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+    .product-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 3vw, 48px); font-weight: 300; line-height: 1.15; color: var(--charcoal); margin-bottom: 12px; }
+    .product-subtitle { font-size: 13px; font-weight: 300; color: var(--mid); margin-bottom: 32px; }
+
+    .product-price-block { display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px; padding-bottom: 36px; border-bottom: 1px solid var(--border-soft); }
+    .product-price { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 300; color: var(--charcoal); }
+    .product-price-old { font-size: 18px; font-weight: 300; color: var(--light-mid); text-decoration: line-through; }
+    .product-price-save { font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); background: rgba(201,169,110,0.1); padding: 4px 12px; }
+
+    /* Variants */
+    .product-option-label { font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mid); margin-bottom: 12px; }
+    .product-variants { display: flex; gap: 10px; margin-bottom: 28px; flex-wrap: wrap; }
+    .variant-btn { padding: 10px 20px; border: 1px solid var(--border-soft); background: none; cursor: none; font-size: 12px; font-weight: 400; color: var(--mid); transition: border-color 0.25s, color 0.25s, background 0.25s; }
+    .variant-btn:hover, .variant-btn.active { border-color: var(--charcoal); color: var(--charcoal); background: var(--cream); }
+
+    /* Material chips */
+    .material-chips { display: flex; gap: 8px; margin-bottom: 36px; flex-wrap: wrap; }
+    .material-chip { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--light-mid); border: 1px solid var(--border-soft); padding: 6px 14px; }
+
+    /* Add to cart */
+    .product-cta { display: flex; gap: 12px; margin-bottom: 36px; }
+    .btn-add-cart { flex: 1; background: var(--charcoal); color: var(--warm-white); border: none; padding: 18px 32px; font-family: 'Raleway', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; cursor: none; transition: background 0.3s; }
+    .btn-add-cart:hover { background: var(--gold); }
+    .btn-wish { width: 56px; height: 56px; border: 1px solid var(--border-soft); background: none; cursor: none; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: border-color 0.25s, background 0.25s; flex-shrink: 0; }
+    .btn-wish:hover { border-color: var(--gold); background: rgba(201,169,110,0.08); }
+
+    /* Delivery info */
+    .delivery-info { display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; }
+    .delivery-row { display: flex; align-items: center; gap: 14px; font-size: 12px; font-weight: 300; color: var(--mid); }
+    .delivery-icon { width: 32px; height: 32px; border: 1px solid var(--border-soft); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+
+    /* Accordion */
+    .accordion { border-top: 1px solid var(--border-soft); }
+    .accordion-item { border-bottom: 1px solid var(--border-soft); }
+    .accordion-trigger { width: 100%; background: none; border: none; padding: 20px 0; display: flex; justify-content: space-between; align-items: center; cursor: none; }
+    .accordion-trigger-label { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--charcoal); }
+    .accordion-trigger-icon { font-size: 20px; color: var(--gold); transition: transform 0.3s; }
+    .accordion-item.open .accordion-trigger-icon { transform: rotate(45deg); }
+    .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .accordion-body-inner { padding: 0 0 24px; font-size: 12px; font-weight: 300; color: var(--mid); line-height: 1.9; }
+
+    /* ---- YOU MAY ALSO LIKE ---- */
+    .related { padding: 80px 64px 120px; background: var(--cream); }
+    .related-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 48px; }
+    .related-card { text-decoration: none; color: inherit; display: block; }
+    .related-card-img { position: relative; overflow: hidden; aspect-ratio: 3/4; margin-bottom: 14px; }
+    .related-card-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.5s; }
+    .related-card:hover .related-card-img img { transform: scale(1.06); }
+    .related-card-name { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 400; color: var(--charcoal); margin-bottom: 4px; transition: color 0.25s; }
+    .related-card:hover .related-card-name { color: var(--gold); }
+    .related-card-price { font-size: 13px; font-weight: 500; color: var(--mid); }
+
+    @media (max-width: 1024px) {
+      .product-layout { grid-template-columns: 1fr; }
+      .product-gallery { padding: 40px 32px; }
+      .product-info { padding: 40px 32px 80px; }
+      .related { padding: 64px 32px; }
+      .related-grid { grid-template-columns: repeat(2, 1fr); }
+      .breadcrumb { padding: 100px 32px 0; }
+    }
+    @media (max-width: 600px) {
+      .gallery-thumbs { display: none; }
+      .related-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav id="navbar" class="scrolled">
+    <a href="index.html" class="nav-logo">Dazzle <span>&</span> Mood</a>
+    <ul class="nav-links">
+      <li><a href="index.html#collections">Коллекции</a></li>
+      <li><a href="catalog.html">Каталог</a></li>
+      <li><a href="index.html#about">О бренде</a></li>
+      <li><a href="index.html#locations">Магазины</a></li>
+    </ul>
+    <a href="catalog.html" class="nav-cta">В каталог</a>
+  </nav>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="index.html">Главная</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="catalog.html">Каталог</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="catalog.html">Серьги &amp; Каффы</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">Серьги-подвески «Нити»</span>
+  </div>
+
+  <!-- PRODUCT -->
+  <div class="product-layout">
+
+    <!-- GALLERY -->
+    <div class="product-gallery">
+      <div class="gallery-thumbs">
+        <div class="gallery-thumb active" onclick="switchImg(this, 0)">
+          <img src="https://static.tildacdn.com/tild3038-3035-4364-a137-396338656431/IMG_6613_11zon.jpg" alt="">
+        </div>
+        <div class="gallery-thumb" onclick="switchImg(this, 1)">
+          <img src="https://static.tildacdn.com/tild6661-6132-4635-a337-643233373735/RNI-Films-IMG-E93FAB.jpg" alt="">
+        </div>
+        <div class="gallery-thumb" onclick="switchImg(this, 2)">
+          <img src="https://static.tildacdn.com/tild3862-6663-4934-b965-306434643835/IMG_6615_11zon.jpg" alt="">
+        </div>
+        <div class="gallery-thumb" onclick="switchImg(this, 3)">
+          <img src="https://static.tildacdn.com/tild6631-6538-4366-a366-336336363331/D0FC4E85-FCA2-45BE-8.JPEG" alt="">
+        </div>
+      </div>
+      <div class="gallery-main">
+        <img id="mainImg" src="https://static.tildacdn.com/tild3038-3035-4364-a137-396338656431/IMG_6613_11zon.jpg" alt="Серьги-подвески Нити">
+        <div class="gallery-main-overlay">
+          <button class="gallery-action">♡</button>
+          <button class="gallery-action" style="font-size:12px">⤢</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="product-info">
+      <p class="product-breadcrumb-cat">Серьги &amp; Каффы · Новинка</p>
+      <h1 class="product-title">Серьги-подвески<br>«Нити»</h1>
+      <p class="product-subtitle">Лёгкие золотые серьги с овальным звеном и свисающими цепочками-нитями. Тонкий акцент для повседневного образа.</p>
+
+      <div class="product-price-block">
+        <span class="product-price">2 400 ₽</span>
+      </div>
+
+      <p class="product-option-label">Металл</p>
+      <div class="product-variants">
+        <button class="variant-btn active">Позолота</button>
+        <button class="variant-btn">Серебро</button>
+        <button class="variant-btn">Розовое золото</button>
+      </div>
+
+      <p class="product-option-label">Материал</p>
+      <div class="material-chips">
+        <span class="material-chip">Медицинская сталь</span>
+        <span class="material-chip">Гипоаллергенно</span>
+        <span class="material-chip">Не темнеет</span>
+      </div>
+
+      <div class="product-cta">
+        <button class="btn-add-cart">Добавить в корзину</button>
+        <button class="btn-wish">♡</button>
+      </div>
+
+      <div class="delivery-info">
+        <div class="delivery-row">
+          <div class="delivery-icon">🚚</div>
+          <span>Доставка по России от 2–5 дней</span>
+        </div>
+        <div class="delivery-row">
+          <div class="delivery-icon">🏪</div>
+          <span>Самовывоз из магазинов в Петербурге</span>
+        </div>
+        <div class="delivery-row">
+          <div class="delivery-icon">🎁</div>
+          <span>Упаковка в льняной мешочек</span>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-item open">
+          <button class="accordion-trigger" onclick="toggleAcc(this)">
+            <span class="accordion-trigger-label">Описание</span>
+            <span class="accordion-trigger-icon">+</span>
+          </button>
+          <div class="accordion-body" style="max-height: 200px">
+            <div class="accordion-body-inner">
+              Серьги с тонкими свисающими цепочками — это деталь, которая заметна в движении. Лёгкие и изящные, они создают мерцающий эффект и подходят к любому образу: от офиса до вечернего выхода. Цепочки разной длины дают объём и игру света.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger" onclick="toggleAcc(this)">
+            <span class="accordion-trigger-label">Состав и уход</span>
+            <span class="accordion-trigger-icon">+</span>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              Основа: медицинская нержавеющая сталь 316L. Покрытие: позолота 14K (или серебро/розовое золото на выбор). Хранить в льняном мешочке вдали от влаги. Не носить в воде. Протирать мягкой тканью.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger" onclick="toggleAcc(this)">
+            <span class="accordion-trigger-label">Размеры</span>
+            <span class="accordion-trigger-icon">+</span>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              Длина серьги: ~6 см с цепочками. Ширина: 1.2 см. Вес пары: 4 г. Замок: английский (английская булавка) — надёжный и удобный.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger" onclick="toggleAcc(this)">
+            <span class="accordion-trigger-label">Доставка и возврат</span>
+            <span class="accordion-trigger-icon">+</span>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              Доставка Почтой России и СДЭК по всей стране. Срок: 2–7 рабочих дней. Самовывоз в магазинах Лофт Проект Этажи и Охта Молл. Возврат в течение 14 дней при сохранении товарного вида.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RELATED -->
+  <section class="related">
+    <p class="section-eyebrow">Смотрите также</p>
+    <h2 class="section-title">Вам может <em>понравиться</em></h2>
+    <div class="related-grid reveal">
+      <a href="product.html" class="related-card">
+        <div class="related-card-img"><img src="https://static.tildacdn.com/tild6661-6132-4635-a337-643233373735/RNI-Films-IMG-E93FAB.jpg" alt=""></div>
+        <p class="related-card-name">Серьги «Жемчужный бантик»</p>
+        <p class="related-card-price">1 890 ₽</p>
+      </a>
+      <a href="product.html" class="related-card">
+        <div class="related-card-img"><img src="https://static.tildacdn.com/tild6630-3534-4331-a465-353162393465/7F5A8788-83D5-46D6-8.jpeg" alt=""></div>
+        <p class="related-card-name">Серьги-хупы «Радуга»</p>
+        <p class="related-card-price">2 100 ₽</p>
+      </a>
+      <a href="product.html" class="related-card">
+        <div class="related-card-img"><img src="https://static.tildacdn.com/tild3766-3963-4531-b531-333737356362/IMG_3410_11zon.jpg" alt=""></div>
+        <p class="related-card-name">Браслет-манжета «Чёрное сердце»</p>
+        <p class="related-card-price">2 600 ₽</p>
+      </a>
+      <a href="product.html" class="related-card">
+        <div class="related-card-img"><img src="https://static.tildacdn.com/tild3862-6663-4934-b965-306434643835/IMG_6615_11zon.jpg" alt=""></div>
+        <p class="related-card-name">Колье «Сердечки-цепи»</p>
+        <p class="related-card-price">2 200 ₽</p>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Dazzle <span>&</span> Mood</div>
+    <p class="footer-copy">© 2024 Dazzle Mood. Все права защищены.</p>
+    <p class="footer-spb">Санкт-Петербург</p>
+  </footer>
+
+  <script src="shared.js"></script>
+  <script>
+    const imgs = [
+      'https://static.tildacdn.com/tild3038-3035-4364-a137-396338656431/IMG_6613_11zon.jpg',
+      'https://static.tildacdn.com/tild6661-6132-4635-a337-643233373735/RNI-Films-IMG-E93FAB.jpg',
+      'https://static.tildacdn.com/tild3862-6663-4934-b965-306434643835/IMG_6615_11zon.jpg',
+      'https://static.tildacdn.com/tild6631-6538-4366-a366-336336363331/D0FC4E85-FCA2-45BE-8.JPEG',
+    ];
+    function switchImg(el, idx) {
+      document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      const main = document.getElementById('mainImg');
+      main.style.opacity = '0';
+      setTimeout(() => { main.src = imgs[idx]; main.style.opacity = '1'; }, 200);
+    }
+    document.getElementById('mainImg').style.transition = 'opacity 0.3s';
+
+    function toggleAcc(btn) {
+      const item = btn.closest('.accordion-item');
+      const body = item.querySelector('.accordion-body');
+      const inner = item.querySelector('.accordion-body-inner');
+      const isOpen = item.classList.contains('open');
+      // close all
+      document.querySelectorAll('.accordion-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.accordion-body').style.maxHeight = '0';
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        body.style.maxHeight = inner.scrollHeight + 24 + 'px';
+      }
+    }
+
+    document.querySelectorAll('.variant-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.closest('.product-variants').querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

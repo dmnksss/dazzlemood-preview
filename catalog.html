@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Каталог — Dazzle Mood</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    /* ---- CATALOG HERO ---- */
+    .catalog-hero {
+      padding: 160px 64px 80px;
+      background: var(--cream);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: end;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .catalog-hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 5vw, 80px);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--charcoal);
+    }
+    .catalog-hero-title em { font-style: italic; color: var(--gold); }
+    .catalog-hero-right { display: flex; flex-direction: column; justify-content: flex-end; gap: 24px; }
+    .catalog-hero-desc { font-size: 13px; font-weight: 300; color: var(--mid); line-height: 1.9; max-width: 380px; }
+    .catalog-count { font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--light-mid); }
+    .catalog-count span { color: var(--charcoal); font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 300; }
+
+    /* ---- FILTERS ---- */
+    .filters-bar {
+      position: sticky; top: 57px; z-index: 50;
+      background: rgba(250,247,242,0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-soft);
+      padding: 0 64px;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+    }
+    .filter-btn {
+      padding: 20px 28px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--light-mid);
+      border: none;
+      background: none;
+      cursor: none;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color 0.25s, border-color 0.25s;
+    }
+    .filter-btn:hover { color: var(--charcoal); }
+    .filter-btn.active { color: var(--charcoal); border-bottom-color: var(--gold); }
+    .filter-sep { width: 1px; height: 20px; background: var(--border-soft); flex-shrink: 0; }
+    .filters-sort {
+      margin-left: auto;
+      padding: 20px 0 20px 28px;
+      font-size: 11px; font-weight: 400; letter-spacing: 0.1em;
+      color: var(--mid); background: none; border: none; cursor: none;
+      display: flex; align-items: center; gap: 8px; white-space: nowrap;
+    }
+    .filters-sort select {
+      font-family: 'Raleway', sans-serif;
+      font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--charcoal);
+      background: none; border: none; cursor: pointer;
+      outline: none;
+    }
+
+    /* ---- PRODUCTS GRID ---- */
+    .products-section { padding: 64px 64px 120px; }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px 24px;
+    }
+    .product-card {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .product-card-img {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      background: var(--cream);
+      margin-bottom: 16px;
+    }
+    .product-card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      display: block;
+    }
+    .product-card:hover .product-card-img img { transform: scale(1.07); }
+    .product-card-badge {
+      position: absolute; top: 16px; left: 16px;
+      font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 5px 12px; background: var(--charcoal); color: var(--gold-light);
+    }
+    .product-card-badge.sale { background: var(--gold); color: var(--warm-white); }
+    .product-card-badge.new { background: var(--charcoal); color: var(--gold-light); }
+    .product-card-actions {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 20px 16px;
+      background: linear-gradient(0deg, rgba(42,37,32,0.8) 0%, transparent 100%);
+      transform: translateY(100%);
+      transition: transform 0.35s;
+      display: flex; justify-content: center;
+    }
+    .product-card:hover .product-card-actions { transform: translateY(0); }
+    .add-to-cart {
+      font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--warm-white); background: none; border: 1px solid rgba(250,247,242,0.5);
+      padding: 10px 24px; cursor: none; transition: background 0.25s, border-color 0.25s; width: 100%;
+    }
+    .add-to-cart:hover { background: var(--gold); border-color: var(--gold); }
+    .product-card-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 400; color: var(--charcoal); margin-bottom: 6px; transition: color 0.25s; }
+    .product-card:hover .product-card-name { color: var(--gold); }
+    .product-card-meta { display: flex; justify-content: space-between; align-items: center; }
+    .product-card-price { font-size: 13px; font-weight: 500; color: var(--charcoal); }
+    .product-card-price-old { font-size: 11px; font-weight: 400; color: var(--light-mid); text-decoration: line-through; margin-left: 8px; }
+    .product-card-material { font-size: 10px; font-weight: 400; letter-spacing: 0.1em; color: var(--light-mid); text-transform: uppercase; }
+
+    /* ---- LOAD MORE ---- */
+    .load-more-wrap { text-align: center; margin-top: 64px; }
+    .load-more-bar {
+      width: 100%; height: 1px;
+      background: var(--border-soft);
+      margin-bottom: 48px;
+      position: relative;
+    }
+    .load-more-bar::after {
+      content: '';
+      position: absolute; left: 0; top: 0;
+      width: 35%; height: 100%;
+      background: var(--gold);
+    }
+    .load-more-hint { font-size: 11px; font-weight: 400; letter-spacing: 0.15em; color: var(--light-mid); margin-bottom: 24px; }
+    .load-more-hint span { color: var(--charcoal); font-weight: 500; }
+
+    @media (max-width: 1200px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 900px) {
+      .catalog-hero, .products-section, .filters-bar { padding-left: 32px; padding-right: 32px; }
+      .catalog-hero { grid-template-columns: 1fr; padding-top: 120px; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) { .products-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav id="navbar" class="scrolled">
+    <a href="index.html" class="nav-logo">Dazzle <span>&</span> Mood</a>
+    <ul class="nav-links">
+      <li><a href="index.html#collections">Коллекции</a></li>
+      <li><a href="catalog.html" style="color:var(--charcoal)">Каталог</a></li>
+      <li><a href="index.html#about">О бренде</a></li>
+      <li><a href="index.html#locations">Магазины</a></li>
+    </ul>
+    <a href="catalog.html" class="nav-cta">В каталог</a>
+  </nav>
+
+  <!-- CATALOG HERO -->
+  <div class="catalog-hero">
+    <div>
+      <p class="section-eyebrow">Каталог</p>
+      <h1 class="catalog-hero-title">Все<br><em>украшения</em></h1>
+    </div>
+    <div class="catalog-hero-right">
+      <p class="catalog-hero-desc">Серьги, кольца, колье, браслеты — тонкие и выразительные акценты, которые подчёркивают индивидуальность и легко подстраиваются под любой образ.</p>
+      <p class="catalog-count"><span>48</span> &nbsp;позиций в каталоге</p>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters-bar">
+    <button class="filter-btn active" onclick="filterCat(this,'all')">Все</button>
+    <div class="filter-sep"></div>
+    <button class="filter-btn" onclick="filterCat(this,'earrings')">Серьги &amp; Каффы</button>
+    <div class="filter-sep"></div>
+    <button class="filter-btn" onclick="filterCat(this,'rings')">Кольца</button>
+    <div class="filter-sep"></div>
+    <button class="filter-btn" onclick="filterCat(this,'necklaces')">Колье &amp; Подвески</button>
+    <div class="filter-sep"></div>
+    <button class="filter-btn" onclick="filterCat(this,'bracelets')">Браслеты</button>
+    <div class="filter-sep"></div>
+    <button class="filter-btn" onclick="filterCat(this,'sale')" style="color:var(--gold)">SALE</button>
+    <div class="filters-sort">
+      Сортировка:&nbsp;
+      <select>
+        <option>Новинки</option>
+        <option>По цене ↑</option>
+        <option>По цене ↓</option>
+        <option>Популярные</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="products-section">
+    <div class="products-grid" id="productsGrid">
+
+      <!-- earrings -->
+      <a href="product.html" class="product-card reveal" data-cat="earrings">
+        <div class="product-card-img">
+          <img src="https://static.tildacdn.com/tild3038-3035-4364-a137-396338656431/IMG_6613_11zon.jpg" alt="Серьги-подвески золото">
+          <span class="product-card-badge new">Новинка</span>
+          <div class="product-card-actions"><button class="add-to-cart">Добавить в корзину</button></div>
+        </div>
+        <p class="product-card-name">Серьги-подвески «Нити»</p>
+        <div class="product-card-meta">
+          <span class="product-card-price">2 400 ₽</span>
+          <span class="product-card-material">Позолота</span>
+        </div>
+      </a>
+
+      <a href="product.html" class="product-card reveal" data-cat="earrings">
+        <div class="product-card-img">
+          <img src="https://static.tildacdn.com/tild6661-6132-4635-a337-643233373735/RNI-Films-IMG-E93FAB.jpg" alt="Серьги жемчуг">
+          <div class="product-card-actions"><button class="add-to-cart">Добавить в корзину</button></div>
+        </div>
+        <p class="product-card-name">Серьги «Жемчужный бантик»</p>
+        <div class="product-card-meta">
+          <span class="product-card-price">1 890 ₽</span>
+          <span class="product-card-material">Сталь + жемчуг</span>
+        </div>
+      </a>
+
+      <a href="product.html" class="product-card reveal" data-cat="earrings">
+        <div class="product-card-img">
+          <img src="https://static.tildacdn.com/tild6630-3534-4331-a465-353162393465/7F5A8788-83D5-46D6-8.jpeg" alt="Серьги кольца">
+          <div class="product-card-actions"><button class="add-to-cart">Добавить в корзину</button></div>
+        </div>
+        <p class="product-card-name">Серьги-хупы «Радуга»</p>
+        <div class="product-card-meta">
+          <span class="product-card-price">2 100 ₽</span>
+          <span class="product-card-material">Сталь + камни</span>
+        </div>
+      </a>
+
+      <!-- rings -->
+      <a href="product.html" class="product-card reveal" data-cat="rings">
+        <div class="product-card-img">
+          <img src="https://static.tildacdn.com/tild6366-3233-4932-b166-383663316535/IMG_6611_11zon.jpg" alt="Кольцо розовый камень">
+          <span class="product-card-badge new">Новинка</span>
+          <div class="product-card-actions"><button class="add-to-cart">Добавить в корзину</button></div>
+        </div>
+        <p class="product-card-name">Кольцо «Розовый кварц»</p>
+        <div class="product-card-meta">
+          <span class="product-card-price">1 650 ₽</span>
+          <span class="product-card-material">Позолота + кварц</span>
+        </div>
+      </a>
+
+      <a href="product.html" class="product-card reveal" data-cat="rings">
+        <div class="product-card-img">
+          <img src="https://static.tildacdn.com/tild3236-6536-4832-b266-353634313239/RNI-Films-IMG-BC1684.JPG" alt="Кольца набор">
+          <div class="product-card-actions"><button class="add-to-cart">Добавить в корзину</button></div>
+        </div>
+        <p class="product-card-name">Набор колец «Восток»</p>
+        <div class="product-card-meta">
+          <span class="product-card-price">3 200 ₽</span>
+          <span class="product-card-material">Серебро 925</span>
+        </div>
+      </a>
+
+      <!-- necklaces -->
+      <a href="product.html" class="product-card reveal" data-cat="necklaces">
+        <div class="product-card-img">
+          <img src="https://static.tildacdn.com/tild3662-3232-4333-a665-303735663537/B6FBC4F6-7745-4E30-8.jpeg" alt="Кулон дракон">
+          <div class="product-card-actions"><button class="add-to-cart">Добавить в корзину</button></div>
+        </div>
+        <p class="product-card-name">Кулон «Дракон»</p>
+        <div class="product-card-meta">
+          <span class="product-card-price">2 800 ₽</span>
+          <span class="product-card-material">Серебро + перламутр</span>
+        </div>
+      </a>
+
+      <a href="product.html" class="product-card reveal" data-cat="necklaces">
+        <div class="product-card-img">
+          <img src="https://static.tildacdn.com/tild3862-6663-4934-b965-306434643835/IMG_6615_11zon.jpg" alt="Колье сердечки">
+          <span class="product-card-badge new">Новинка</span>
+          <div class="product-card-actions"><button class="add-to-cart">Добавить в корзину</button></div>
+        </div>
+        <p class="product-card-name">Колье «Сердечки-цепи»</p>
+        <div class="product-card-meta">
+          <span class="product-card-price">2 200 ₽</span>
+          <span class="product-card-material">Сталь серебро</span>
+        </div>
+      </a>
+
+      <!-- bracelets + sale -->
+      <a href="product.html" class="product-card reveal" data-cat="bracelets">
+        <div class="product-card-img">
+          <img src="https://static.tildacdn.com/tild3766-3963-4531-b531-333737356362/IMG_3410_11zon.jpg" alt="Браслет манжета">
+          <div class="product-card-actions"><button class="add-to-cart">Добавить в корзину</button></div>
+        </div>
+        <p class="product-card-name">Браслет-манжета «Чёрное сердце»</p>
+        <div class="product-card-meta">
+          <span class="product-card-price">2 600 ₽</span>
+          <span class="product-card-material">Сталь</span>
+        </div>
+      </a>
+
+      <a href="product.html" class="product-card reveal" data-cat="bracelets sale">
+        <div class="product-card-img">
+          <img src="https://static.tildacdn.com/tild6465-3134-4634-b832-623731336338/RNI-Films-IMG-17F36D.jpeg" alt="Браслет на песке">
+          <span class="product-card-badge sale">–30%</span>
+          <div class="product-card-actions"><button class="add-to-cart">Добавить в корзину</button></div>
+        </div>
+        <p class="product-card-name">Браслет «Манжета-клык»</p>
+        <div class="product-card-meta">
+          <span class="product-card-price">1 960 ₽ <span class="product-card-price-old">2 800 ₽</span></span>
+          <span class="product-card-material">Серебро</span>
+        </div>
+      </a>
+
+      <a href="product.html" class="product-card reveal" data-cat="earrings sale">
+        <div class="product-card-img">
+          <img src="https://static.tildacdn.com/tild6631-6538-4366-a366-336336363331/D0FC4E85-FCA2-45BE-8.JPEG" alt="Серьги листья">
+          <span class="product-card-badge sale">–30%</span>
+          <div class="product-card-actions"><button class="add-to-cart">Добавить в корзину</button></div>
+        </div>
+        <p class="product-card-name">Серьги «Кораллы»</p>
+        <div class="product-card-meta">
+          <span class="product-card-price">2 100 ₽ <span class="product-card-price-old">3 000 ₽</span></span>
+          <span class="product-card-material">Серебро</span>
+        </div>
+      </a>
+
+      <a href="product.html" class="product-card reveal" data-cat="earrings sale">
+        <div class="product-card-img">
+          <img src="https://static.tildacdn.com/tild3138-3132-4332-a165-353666326130/photo_54494081886974.jpg" alt="Серьги каффы">
+          <span class="product-card-badge sale">–30%</span>
+          <div class="product-card-actions"><button class="add-to-cart">Добавить в корзину</button></div>
+        </div>
+        <p class="product-card-name">Серьги-каффы «Звезда»</p>
+        <div class="product-card-meta">
+          <span class="product-card-price">1 750 ₽ <span class="product-card-price-old">2 500 ₽</span></span>
+          <span class="product-card-material">Сталь серебро</span>
+        </div>
+      </a>
+
+      <a href="product.html" class="product-card reveal" data-cat="necklaces sale">
+        <div class="product-card-img">
+          <img src="https://static.tildacdn.com/tild6631-3665-4335-a532-323530663333/RNI-Films-IMG-4D2F42.jpg" alt="Колье морская звезда">
+          <span class="product-card-badge sale">–30%</span>
+          <div class="product-card-actions"><button class="add-to-cart">Добавить в корзину</button></div>
+        </div>
+        <p class="product-card-name">Колье «Морская звезда»</p>
+        <div class="product-card-meta">
+          <span class="product-card-price">1 890 ₽ <span class="product-card-price-old">2 700 ₽</span></span>
+          <span class="product-card-material">Сталь серебро</span>
+        </div>
+      </a>
+
+    </div><!-- /products-grid -->
+
+    <!-- load more -->
+    <div class="load-more-wrap">
+      <div class="load-more-bar"></div>
+      <p class="load-more-hint">Показано <span>12</span> из 48 украшений</p>
+      <a href="#" class="btn-primary">Загрузить ещё</a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Dazzle <span>&</span> Mood</div>
+    <p class="footer-copy">© 2024 Dazzle Mood. Все права защищены.</p>
+    <p class="footer-spb">Санкт-Петербург</p>
+  </footer>
+
+  <script src="shared.js"></script>
+  <script>
+    function filterCat(btn, cat) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.product-card').forEach(card => {
+        const cats = card.dataset.cat || '';
+        if (cat === 'all' || cats.includes(cat)) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+    // Stagger product cards
+    document.querySelectorAll('.product-card').forEach((el, i) => {
+      el.style.transitionDelay = (i % 4) * 80 + 'ms';
+    });
+  </script>
+</body>
+</html>
