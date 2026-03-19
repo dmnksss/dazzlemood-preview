@@ -89,8 +89,15 @@ footer { background: var(--charcoal); border-top: 1px solid rgba(201,169,110,0.1
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
 @media (max-width: 768px) {
-  nav { padding: 16px 20px; }
+  nav { padding: 14px 20px; }
   nav.scrolled { padding: 12px 20px; }
+  .nav-logo { font-size: 15px; letter-spacing: 0.15em; }
   .nav-links { display: none; }
   footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px 20px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .cursor, .cursor-ring { display: none !important; }
+  body { cursor: auto; }
+  button, a { cursor: pointer; }
 }
